@@ -1,0 +1,11 @@
+import React from 'react';
+import { Sidebar, Menu, Divider, Button } from 'semantic-ui-react'
+
+export const ColorPanel = () => {
+    return (
+        <Sidebar as={Menu} icon='labeled' inverted vertical width="very thin" visible>
+            <Divider />
+            <Button icon="add" size="small" color="blue" />
+        </Sidebar>
+    )
+}
