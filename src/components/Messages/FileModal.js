@@ -4,8 +4,12 @@ import uuidv4 from 'uuid/v4';
 import { Modal, Input, Button, Icon } from 'semantic-ui-react'
 import firebase from '../../firebase'
 import { ProgressBar } from './ProgressBar';
+import { useSelector } from 'react-redux';
 
 export const FileModal = ({ modal, setModal, channel, messagesRef, createMessage }) => {
+    const { isPrivate } = useSelector(state => ({
+        ...state.channelReducer
+    }))
     const [file, setFile ] = useState(null)
     const [uploadState, setUploadState] = useState("")
     const [uploadTask, setUploadTask] = useState(null)
@@ -16,7 +20,7 @@ export const FileModal = ({ modal, setModal, channel, messagesRef, createMessage
     // ================================
     const authorized = ['image/jpeg', 'image/png']
     useEffect(() => {
-        if(channel !== null){
+        if(channel !== null && uploadTask !== null){
             const pathToUpload = channel.id
             uploadTask.on("state_changed", snap => {
                 setPercentUploaded(Math.round((snap.bytesTransferred / snap.totalBytes) * 100))
@@ -43,9 +47,16 @@ export const FileModal = ({ modal, setModal, channel, messagesRef, createMessage
     }
     
     const uploadFile = (file, metadata) => {
-        const filePath = `chat/public/${uuidv4()}.jpg`
-        setUploadState("uploading")
-        setUploadTask(storageRef.child(filePath).put(file,metadata))
+        let filePath
+        if(isPrivate){
+            filePath = `chat/private/${uuidv4()}.jpg`
+            setUploadState("uploading")
+            setUploadTask(storageRef.child(filePath).put(file,metadata))
+        } else {
+            filePath = `chat/public/${uuidv4()}.jpg`
+            setUploadState("uploading")
+            setUploadTask(storageRef.child(filePath).put(file,metadata))
+        }    
     }
     const sendFile = () => {
         setLoading(true)
@@ -70,7 +81,7 @@ export const FileModal = ({ modal, setModal, channel, messagesRef, createMessage
             <Input fluid label="file types: jpg or png" name="file" type="file" onChange={addFile}/>
         </Modal.Content>
         <Modal.Actions>
-            <Button color="green" inverted onClick={sendFile}><Icon name="checkmark" />Send</Button>
+            <Button color="green" disabled={uploadState === 'uploading'} inverted onClick={sendFile}><Icon name="checkmark" />Send</Button>
             <Button color="red" inverted onClick={() => setModal(false)}><Icon name="remove"/>Cancel</Button>
         </Modal.Actions>
         {uploadState === 'uploading' ? <ProgressBar percentUploaded={percentUploaded} uploadState={uploadState}/> : null}

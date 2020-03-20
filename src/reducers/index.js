@@ -10,7 +10,8 @@ const initStateL = {
 }
 
 const initStateCh = {
-    channel: null
+    channel: null,
+    isPrivate: false
 }
 
 const userReducer = (state = initStateU, action) => {
@@ -43,6 +44,7 @@ const channelReducer = (state = initStateCh, action) => {
             return {
                 ...state,
                 channel: action.payload.channel,
+                isPrivate: action.payload.isPrivate
             }
         default:
             return state

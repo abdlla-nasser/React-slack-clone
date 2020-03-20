@@ -30,11 +30,12 @@ export const UserPanel = () => {
         },
         {
             key: 'Sing Out',
-            text: <span onClick={handleSignOut}>Sign Out</span>
+            text: <span>Sign Out</span>,
+            onClick: handleSignOut
         }
     ]
     return (
-        <Grid style={{ background: "#4c3c4c" }}>
+        <Grid style={{ background: "#4c3c4c" , marginRight: 0}}>
             <Grid.Column>
                 <Grid.Row style={{ padding: "1.2em", margin: 0}}>
                     <Header inverted floated="left" as="h2">
